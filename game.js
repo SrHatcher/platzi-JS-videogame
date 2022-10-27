@@ -200,7 +200,7 @@ function gameWin(){
         }
     }else{
         localStorage.setItem('record_time', playerTime)
-        pResult.innerHTML("primera vez?")
+        pResult.innerText="primera vez?"
     }
     console.log({recordTime, playerTime, level})
 }
