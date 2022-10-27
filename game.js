@@ -180,11 +180,12 @@ function levelWin(){
         gameWin()
     }else{
         level++
+
     }
     
 }
 
-function gameWinAndSetRecord(){
+function gameWin(){
     clearInterval(timeInterval)
 
     const playerTime = Date.now() - timeStart;
