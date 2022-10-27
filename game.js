@@ -4,11 +4,20 @@ const btnUp = document.getElementById('up')
 const btnLeft = document.getElementById('left')
 const btnRight = document.getElementById('right')
 const btnDown = document.getElementById('down')
+const spanLives = document.getElementById('corazones')
+let spanTime =  document.getElementById('time')
+const spanRecord = document.getElementById('record')
+const pResult = document.getElementById('result')
 
 let level=0;
 let lives = 3;
 let canvasSize;
 let elementsSize;
+
+let timeStart;
+let timePlayer;
+let timeInterval;
+
 let playerPosition = {
     x: undefined,
     y: undefined
@@ -85,6 +94,9 @@ function resizeGame(){
     playerPosition.y = undefined;
     lives=3;
     level=0
+    timeStart = undefined
+    clearInterval(timeInterval)
+    spanTime.innerText="0"
     startGame()
 }
 
@@ -100,6 +112,12 @@ function startGame(){
         return
     }
 
+    if(!timeStart){
+        timeStart=Date.now()
+        timeInterval = setInterval(() => showTime(), (100));
+        showRecord();
+    }
+    
     const arrayNivel = nivel.split("")    
     let i=1;
     let j=1;
@@ -107,9 +125,11 @@ function startGame(){
         if(emojis[element]){
             game.fillText(emojis[element], (i * elementsSize), elementsSize * j)            
             if(element=="O"){
+                showLives()
                 if(!playerPosition.x && !playerPosition.y){
                     playerPosition.x = i * elementsSize;
                     playerPosition.y = elementsSize * j;
+                    
                 }
             }
             if(element=="I"){
@@ -156,11 +176,46 @@ function giftTaken(){
 }
 
 function levelWin(){
-    level++
+    if(level>=2){
+        gameWin()
+    }else{
+        level++
+    }
+    
 }
 
-function gameWin(){
-    console.log("hola")
+function gameWinAndSetRecord(){
+    clearInterval(timeInterval)
+
+    const playerTime = Date.now() - timeStart;
+    const recordTime = localStorage.getItem('record_time')
+
+    if(recordTime){
+        if(recordTime>=playerTime){
+            localStorage.setItem('record_time', playerTime)
+            pResult.innerText="SUPERASTE EL RECORD"
+        }else{
+            pResult.innerText="Lo siento, no superaste el record"
+        }
+    }else{
+        localStorage.setItem('record_time', playerTime)
+        pResult.innerHTML("primera vez?")
+    }
+    console.log({recordTime, playerTime, level})
+}
+
+function showLives(){
+    let heartsArray = Array(lives).fill(emojis.CORAZON)
+    spanLives.innerHTML = ""
+    heartsArray.forEach(heart => spanLives.append(heart))    
+}
+
+function showTime(){
+    spanTime.innerText=Date.now() - timeStart
+}
+
+function showRecord(){
+    spanRecord.innerHTML = localStorage.getItem('record_time')
 }
 
 function bombTouched(){
@@ -170,6 +225,7 @@ function bombTouched(){
         lives -=1;
         playerPosition.x=undefined
         playerPosition.y=undefined
+        showLives()
         if(!lives>0){
             resizeGame()
         }
