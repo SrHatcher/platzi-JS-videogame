@@ -203,6 +203,10 @@ function gameWin(){
         pResult.innerText="primera vez?"
     }
     console.log({recordTime, playerTime, level})
+
+    setTimeout(() => {
+        location.reload()
+    }, 4000);
 }
 
 function showLives(){
